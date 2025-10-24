@@ -1,3 +1,6 @@
+using Api.Controllers.AuthController.Dto.Request;
+using Api.Controllers.AuthController.Dto.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers.AuthController;
@@ -12,7 +15,9 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Регистрация пользователя
     /// </summary>
-    public async Task RegisterUserAsync()
+    [HttpPost("register")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<CreateRegisterUserResponse> RegisterUserAsync(CreateRegisterUserRequest request)
     {
         
     }
@@ -20,7 +25,10 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Регистрация администратора
     /// </summary>
-    public async Task RegisterAdminAsync()
+    [Authorize]
+    [HttpPost("register-admin")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<CreateRegisterAdminResponse> RegisterAdminAsync(CreateRegisterAdminRequest request)
     {
         
     }
@@ -28,7 +36,9 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Единая авторизация для пользователя и админа
     /// </summary>
-    public async Task LoginAsync()
+    [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<CreateLoginResponse> LoginAsync(CreateLoginRequest request)
     {
         
     }
@@ -36,7 +46,10 @@ public class AuthController : ControllerBase
     /// <summary>
     /// Выход из кабинета
     /// </summary>
-    public async Task LogoutAsync()
+    [Authorize]
+    [HttpPost("logout")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<CreateLogoutResponse> LogoutAsync(CreateLogoutRequest request)
     {
         
     }
