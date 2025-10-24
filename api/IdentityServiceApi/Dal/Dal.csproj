@@ -7,10 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+<<<<<<< HEAD:api/IdentityServiceApi/Dal/Dal.csproj
       <Folder Include="Migrations\" />
     </ItemGroup>
 
     <ItemGroup>
+=======
+>>>>>>> b9dd54b44fed153bfc963439af194fa3c73140a4:service-api/IdentityServiceApi/Logic/Logic.csproj
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
     </ItemGroup>
 
