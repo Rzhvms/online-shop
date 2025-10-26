@@ -1,27 +1,29 @@
+using Logic.Models;
+
 namespace Logic.Services.Interfaces;
 
 /// <summary>
-/// Сервис для авторизации и аутентификации пользователя
+/// Сервис для реализации логики аутентификации, авторизации и управления сессиями
 /// </summary>
 public interface IAuthService
 {
     /// <summary>
-    /// Регистрация пользователя
+    /// Регистрация нового пользователя
     /// </summary>
-    Task RegisterUserAsync();
+    Task CreateUserAsync(UserModel userModel);
+
+    /// <summary>
+    /// Авторизация пользователя
+    /// </summary>
+    Task<string> LoginAsync(string email, string password);
     
     /// <summary>
-    /// Регистрация администратора
+    /// Изменение пароля
     /// </summary>
-    Task RegisterAdminAsync();
-    
+    Task UpdatePasswordAsync(Guid userId, string newPassword);
+
     /// <summary>
-    /// Единая авторизация для пользователя и админа
+    /// Процесс восстановления пароля по Email
     /// </summary>
-    Task LoginAsync();
-    
-    /// <summary>
-    /// Выход из кабинета
-    /// </summary>
-    Task LogoutAsync();
+    Task UpdateForgotPasswordAsync(string email);
 }

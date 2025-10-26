@@ -1,3 +1,5 @@
+using Dal.DalEntities;
+
 namespace Dal.Repositories.Interfaces;
 
 /// <summary>
@@ -6,22 +8,17 @@ namespace Dal.Repositories.Interfaces;
 public interface IAuthRepository
 {
     /// <summary>
-    /// Регистрация пользователя
+    /// Регистрация нового пользователя
     /// </summary>
-    Task RegisterUserAsync();
+    Task CreateUserAsync(UserDal user);
     
     /// <summary>
-    /// Регистрация администратора
+    /// Изменение пароля
     /// </summary>
-    Task RegisterAdminAsync();
-    
+    Task UpdatePasswordAsync(Guid userId, string newPassword);
+
     /// <summary>
-    /// Единая авторизация для пользователя и админа
+    /// Процесс восстановления пароля по Email
     /// </summary>
-    Task LoginAsync();
-    
-    /// <summary>
-    /// Выход из кабинета
-    /// </summary>
-    Task LogoutAsync();
+    Task UpdateForgotPasswordAsync(string email);
 }

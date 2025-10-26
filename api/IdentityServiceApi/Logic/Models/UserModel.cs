@@ -1,11 +1,6 @@
-using System.ComponentModel.DataAnnotations;
+namespace Logic.Models;
 
-namespace Dal.DalEntities;
-
-/// <summary>
-/// Dal сущность пользователя
-/// </summary>
-public record UserDal
+public record UserModel
 {
     /// <summary>
     /// Идентификатор
@@ -15,46 +10,36 @@ public record UserDal
     /// <summary>
     /// Уникальное имя пользователя (логин)
     /// </summary>
-    [Required]
-    [MaxLength(50)]
     public required string UserName { get; set; }
     
     /// <summary>
     /// Хэш пароля
     /// </summary>
-    [Required]
-    public required string PasswordHash { get; set; }
+    public required string Password { get; set; }
     
     /// <summary>
     /// Имя пользователя
     /// </summary>
-    [MaxLength(50)]
     public string? Name { get; set; }
     
     /// <summary>
     /// Фамилия
     /// </summary>
-    [MaxLength(50)]
     public string? Surname { get; set; }
     
     /// <summary>
     /// Отчество
     /// </summary>
-    [MaxLength(50)]
     public string? MiddleName { get; set; }
     
     /// <summary>
     /// Электронная почта
     /// </summary>
-    [EmailAddress]
-    [MaxLength(50)]
     public string? Email { get; set; }
     
     /// <summary>
     /// Телефон
     /// </summary>
-    [RegularExpression(@"^(\+7|8)?[\s\-]?\(?[0-9]{3}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$")]
-    [MaxLength(20)]
     public string? Phone { get; set; }
         
     /// <summary>

@@ -9,6 +9,7 @@ public static class ForStartupLogic
     public static IServiceCollection AddLogic(this IServiceCollection services)
     {
         services.AddTransient<IAuthService, AuthService>();
+        services.AddTransient<IHashPasswordService, HashPasswordService>();
         
         return services;
     }
