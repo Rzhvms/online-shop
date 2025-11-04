@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Services.Auth.Jwt;
 
+/// <inheritdoc />
 public class JwtService : IAuthTokenService
 {
     private readonly IOptions<JwtSettings> _settings;
@@ -20,7 +21,8 @@ public class JwtService : IAuthTokenService
         _rsaSecurityKey = rsaSecurityKey;
     }
 
-    public Task<string> GenerateAccessToken(User user)
+    /// <inheritdoc />
+    public Task<string> GenerateAccessToken(UserDal userDal)
     {
         var signingCredentials = new SigningCredentials(
             key: _rsaSecurityKey,
@@ -30,12 +32,12 @@ public class JwtService : IAuthTokenService
         var claimsIdentity = new ClaimsIdentity();
 
         // Access Token must only carry the user Id
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
+        claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userDal.Id.ToString()));
 
         // Add scope claim, which contains an array of scopes
-        var scope = user.Claims.SingleOrDefault(c => c.Type == "scope");
+        var scope = userDal.Claims.SingleOrDefault(c => c.Type == "scope");
         if (scope != null)
-            claimsIdentity.AddClaim(new System.Security.Claims.Claim("scope", string.Join(" ", scope.Value)));
+            claimsIdentity.AddClaim(new Claim("scope", string.Join(" ", scope.Value)));
 
         var jwtHandler = new JwtSecurityTokenHandler();
 
@@ -53,7 +55,8 @@ public class JwtService : IAuthTokenService
         return Task.FromResult(serializedJwt);
     }
 
-    public Task<string> GenerateIdToken(User user)
+    /// <inheritdoc />
+    public Task<string> GenerateIdToken(UserDal userDal)
     {
         var signingCredentials = new SigningCredentials(
             key: _rsaSecurityKey,
@@ -62,14 +65,14 @@ public class JwtService : IAuthTokenService
 
         var claimsIdentity = new ClaimsIdentity();
 
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, user.Name));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Email, user.Email));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.GivenName, user.Name));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Surname, user.LastName));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, userDal.Id.ToString()));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, userDal.Name));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Email, userDal.Email));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.GivenName, userDal.Name));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Surname, userDal.LastName));
 
         // Add custom claims if any
-        foreach (var c in user.Claims ?? System.Linq.Enumerable.Empty<Domain.User.Claim>())
+        foreach (var c in userDal.Claims ?? System.Linq.Enumerable.Empty<Domain.User.ClaimDal>())
         {
             claimsIdentity.AddClaim(new System.Security.Claims.Claim(c.Type, c.Value));
         }
@@ -90,6 +93,7 @@ public class JwtService : IAuthTokenService
         return Task.FromResult(serializedJwt);
     }
 
+    /// <inheritdoc />
     public Task<string> GenerateRefreshToken()
     {
         var size = _settings.Value.RefreshTokenSettings.Length;
@@ -99,11 +103,13 @@ public class JwtService : IAuthTokenService
         return Task.FromResult(Convert.ToBase64String(buffer));
     }
 
+    /// <inheritdoc />
     public Task<int> GetRefreshTokenLifetimeInMinutes()
     {
         return Task.FromResult(_settings.Value.RefreshTokenSettings.LifeTimeInMinutes);
     }
 
+    /// <inheritdoc />
     public Task<Guid> GetUserIdFromToken(string token)
     {
         try
@@ -133,6 +139,7 @@ public class JwtService : IAuthTokenService
         }
     }
 
+    /// <inheritdoc />
     public Task<bool> IsTokenValid(string token, bool validateLifeTime)
     {
         var tokenValidationParameters = new TokenValidationParameters

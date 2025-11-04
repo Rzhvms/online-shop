@@ -27,16 +27,14 @@ public class RefreshTokenUseCase : IRefreshTokenUseCase
     /// <inheritdoc />
     public async Task<RefreshTokenResponse> ExecuteAsync(RefreshTokenRequest request)
     {
-        // 1. Проверяем валидность access-токена
         var isValid = await _authTokenService.IsTokenValid(request.AccessToken, false);
         if (!isValid)
         {
             return Error(ErrorCodes.AccessTokenIsNotValid);
         }
 
-        // 2. Получаем пользователя из токена
         var userId = await _authTokenService.GetUserIdFromToken(request.AccessToken);
-        var user = await _authRepository.GetUserByUserId(userId);
+        var user = await _authRepository.GetUserByUserIdAsync(userId);
 
         if (user == null)
             return Error(ErrorCodes.UserDoesNotExist);
@@ -62,7 +60,7 @@ public class RefreshTokenUseCase : IRefreshTokenUseCase
             await _authTokenService.GetRefreshTokenLifetimeInMinutes()
         );
 
-        await _authRepository.UpdateUser(user);
+        await _authRepository.UpdateUserAsync(user);
 
         _logger.LogInformation("Refresh-токен обновлён для пользователя {UserId}", user.Id);
 

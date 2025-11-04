@@ -1,5 +1,8 @@
 namespace Application.Exceptions;
 
+/// <summary>
+/// Кастомные ошибки при невалидном Refresh токене
+/// </summary>
 public class InvalidTokenException : Exception
 {
     public InvalidTokenException() { }

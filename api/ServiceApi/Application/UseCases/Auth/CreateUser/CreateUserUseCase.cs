@@ -32,7 +32,7 @@ public class CreateUserUseCase : ICreateUserUseCase
     public async Task<CreateUserResponse> ExecuteAsync(CreateUserRequest request)
     {
         // Проверяем, не существует ли пользователь с таким email
-        var existingUser = await _authRepository.GetUserByEmail(request.Email);
+        var existingUser = await _authRepository.GetUserByEmailAsync(request.Email);
         if (existingUser != null)
         {
             return new CreateUserErrorResponse
@@ -45,7 +45,7 @@ public class CreateUserUseCase : ICreateUserUseCase
         var salt = _cryptographyService.GenerateSalt();
         var now = DateTime.UtcNow;
 
-        var user = new User
+        var user = new UserDal
         {
             Id = Guid.NewGuid(),
             Email = request.Email,
@@ -58,7 +58,7 @@ public class CreateUserUseCase : ICreateUserUseCase
             UpdateAt = now
         };
 
-        await _authRepository.CreateUser(user);
+        await _authRepository.CreateUserAsync(user);
 
         _logger.LogInformation("Пользователь {Email} успешно создан", user.Email);
 
@@ -71,13 +71,13 @@ public class CreateUserUseCase : ICreateUserUseCase
     /// <summary>
     /// Преобразует список claim из запроса в доменные объекты.
     /// </summary>
-    private static IList<Domain.User.Claim> ToClaims(IList<Request.Claim>? requestClaims)
+    private static IList<ClaimDal> ToClaims(IList<Claim>? requestClaims)
     {
         if (requestClaims == null || requestClaims.Count == 0)
-            return new List<Domain.User.Claim>();
+            return new List<ClaimDal>();
 
         return requestClaims
-            .Select(c => new Domain.User.Claim
+            .Select(c => new ClaimDal
             {
                 Type = c.Type,
                 Value = c.Value

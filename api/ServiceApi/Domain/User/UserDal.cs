@@ -6,7 +6,7 @@ namespace Domain.User;
 /// Пользователь системы.
 /// Содержит данные для аутентификации, персональные данные и права доступа.
 /// </summary>
-public class User
+public class UserDal
 {
     /// <summary>
     /// Идентификатор пользователя
@@ -16,42 +16,42 @@ public class User
     /// <summary>
     /// Электронная почта пользователя, используется для логина и уведомлений.
     /// </summary>
-    public string Email { get; set; }
+    [Required]
+    [EmailAddress]
+    [MaxLength(50)]
+    public required string Email { get; set; }
     
     /// <summary>
     /// Номер телефона пользователя.
     /// </summary>
+    [MaxLength(50)]
     public string? Phone { get; set; }
 
     /// <summary>
     /// Хэш пароля пользователя.
     /// </summary>
-    public string Password { get; set; }
+    [Required]
+    public required string Password { get; set; }
 
     /// <summary>
     /// Соль для хэширования пароля.
     /// </summary>
-    public string Salt { get; set; }
+    [Required]
+    public required string Salt { get; set; }
 
     /// <summary>
     /// Имя пользователя.
     /// </summary>
-    public string Name { get; set; }
+    [MaxLength(50)]
+    [Required]
+    public required string Name { get; set; }
 
     /// <summary>
     /// Фамилия пользователя.
     /// </summary>
-    public string LastName { get; set; }
-
-    /// <summary>
-    /// Список прав/роль пользователя.
-    /// </summary>
-    public IList<Claim>? Claims { get; set; }
-
-    /// <summary>
-    /// Связанный refresh-токен для обновления JWT.
-    /// </summary>
-    public RefreshTokenEntity? RefreshToken { get; set; }
+    [MaxLength(50)]
+    [Required]
+    public required string LastName { get; set; }
 
     /// <summary>
     /// Дата создания пользователя.
@@ -64,11 +64,21 @@ public class User
     public DateTime? UpdateAt { get; set; }
 
     /// <summary>
+    /// Список прав/роль пользователя.
+    /// </summary>
+    public IList<ClaimDal>? Claims { get; set; }
+
+    /// <summary>
+    /// Связанный refresh-токен для обновления JWT.
+    /// </summary>
+    public RefreshTokenDal? RefreshToken { get; set; }
+    
+    /// <summary>
     /// Конструктор по умолчанию. Инициализирует коллекции.
     /// </summary>
-    public User()
+    public UserDal()
     {
-        Claims = new List<Claim>();
-        RefreshToken = new RefreshTokenEntity();
+        Claims = new List<ClaimDal>();
+        RefreshToken = new RefreshTokenDal();
     }
 }

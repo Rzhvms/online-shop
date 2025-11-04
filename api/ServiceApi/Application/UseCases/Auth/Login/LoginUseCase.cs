@@ -33,26 +33,25 @@ public class LoginUseCase : ILoginUseCase
     /// </summary>
     public async Task<LoginResponse> ExecuteAsync(LoginRequest request)
     {
-        // 1️⃣ Проверяем, существует ли пользователь
-        var user = await _authRepository.GetUserByEmail(request.Email);
+        var user = await _authRepository.GetUserByEmailAsync(request.Email);
+
         if (user == null)
+        {
             return BuildErrorResponse(ErrorCodes.UserDoesNotExist);
+        }
 
-        // 2️⃣ Проверяем корректность пароля
         if (!AreCredentialsValid(request.Password, user))
+        {
             return BuildErrorResponse(ErrorCodes.CredentialsAreNotValid);
+        }
 
-        // 3️⃣ Генерируем новый refresh token
         user.RefreshToken = await CreateRefreshTokenAsync();
 
-        // 4️⃣ Обновляем пользователя в базе
-        await _authRepository.UpdateUser(user);
+        await _authRepository.UpdateUserAsync(user);
 
-        // 5️⃣ Генерируем id и access токены
         var idToken = await _authTokenService.GenerateIdToken(user);
         var accessToken = await _authTokenService.GenerateAccessToken(user);
 
-        // 6️⃣ Формируем успешный ответ
         return new LoginSuccessResponse
         {
             IdToken = idToken,
@@ -64,19 +63,19 @@ public class LoginUseCase : ILoginUseCase
     /// <summary>
     /// Проверяет соответствие пароля, введённого пользователем, хешу, сохранённому в БД.
     /// </summary>
-    private bool AreCredentialsValid(string inputPassword, User user)
+    private bool AreCredentialsValid(string inputPassword, UserDal userDal)
     {
-        var computedHash = _cryptographyService.HashPassword(inputPassword, user.Salt);
-        return computedHash == user.Password;
+        var computedHash = _cryptographyService.HashPassword(inputPassword, userDal.Salt);
+        return computedHash == userDal.Password;
     }
 
     /// <summary>
     /// Создаёт новый refresh token с параметрами из AuthTokenService.
     /// </summary>
-    private async Task<RefreshTokenEntity> CreateRefreshTokenAsync()
+    private async Task<RefreshTokenDal> CreateRefreshTokenAsync()
     {
         var lifetimeMinutes = await _authTokenService.GetRefreshTokenLifetimeInMinutes();
-        return new RefreshTokenEntity
+        return new RefreshTokenDal
         {
             Value = await _authTokenService.GenerateRefreshToken(),
             Active = true,

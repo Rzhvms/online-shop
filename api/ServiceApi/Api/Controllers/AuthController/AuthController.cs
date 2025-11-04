@@ -39,29 +39,45 @@ public class AuthController : ControllerBase
         _createUserUseCase = createUserUseCase;
     }
     
+    /// <summary>
+    /// Авторизация пользователя
+    /// </summary>
     [AllowAnonymous]
     [HttpPost("login")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<LoginResponse> LoginAsync(LoginRequest request)
     {
         return await _loginUseCase.ExecuteAsync(request);
     }
 
+    /// <summary>
+    /// Обновление Refresh токена
+    /// </summary>
     [AllowAnonymous]
-    [HttpPost("refreshToken")]
+    [HttpPost("refresh-token")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<RefreshTokenResponse> RefreshTokenAsync(RefreshTokenRequest request)
     {
         return await _refreshTokenUseCase.ExecuteAsync(request);
     }
 
-    [AllowAnonymous]
-    [HttpPost("signOut")]
+    /// <summary>
+    /// Выход пользователя из ЛК, деактивация Refresh токена
+    /// </summary>
+    [Authorize]
+    [HttpPost("sign-out")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<SignOutResponse> SignOutAsync(SignOutRequest request)
     {
         return await _signOutUseCase.ExecuteAsync(request);
     }
 
+    /// <summary>
+    /// Создание пользователя
+    /// </summary>
     [AllowAnonymous]
-    [HttpPost("createUser")]
+    [HttpPost("create-user")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)
     {
         return await _createUserUseCase.ExecuteAsync(request);

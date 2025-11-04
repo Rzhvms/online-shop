@@ -4,8 +4,18 @@ namespace Domain.User;
 /// Представляет право или роль пользователя.
 /// Используется для авторизации и контроля доступа.
 /// </summary>
-public class Claim
+public class ClaimDal
 {
+    /// <summary>
+    /// Идентификатор права
+    /// </summary>
+    public Guid Id { get; set; }
+    
+    /// <summary>
+    /// Идентификатор пользователя
+    /// </summary>
+    public Guid UserId { get; set; }
+    
     /// <summary>
     /// Тип права/роли
     /// </summary>

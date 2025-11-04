@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Application.UseCases.Auth.Login.Request;
 
 /// <summary>
@@ -8,10 +10,13 @@ public record LoginRequest
     /// <summary>
     /// Электронная почта
     /// </summary>
-    public string Email { get; set; }
+    [Required]
+    [MaxLength(50)]
+    public required string Email { get; set; }
     
     /// <summary>
     /// Пароль
     /// </summary>
-    public string Password { get; set; }
+    [Required]
+    public required string Password { get; set; }
 }

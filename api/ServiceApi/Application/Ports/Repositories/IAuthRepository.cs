@@ -10,20 +10,20 @@ public interface IAuthRepository
     /// <summary>
     /// Получает пользователя по адресу электронной почты.
     /// </summary>
-    Task<User?> GetUserByEmail(string email);
+    Task<UserDal?> GetUserByEmailAsync(string email);
 
     /// <summary>
     /// Получает пользователя по уникальному идентификатору.
     /// </summary>
-    Task<User?> GetUserByUserId(Guid userId);
+    Task<UserDal?> GetUserByUserIdAsync(Guid userId);
 
     /// <summary>
     /// Создаёт нового пользователя в хранилище.
     /// </summary>
-    Task CreateUser(User user);
+    Task CreateUserAsync(UserDal userDal);
 
     /// <summary>
     /// Обновляет данные существующего пользователя.
     /// </summary>
-    Task UpdateUser(User user);
+    Task UpdateUserAsync(UserDal userDal);
 }

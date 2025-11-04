@@ -5,12 +5,14 @@ using Konscious.Security.Cryptography;
 
 namespace Infrastructure.Services.Auth.Cryptography;
 
+/// <inheritdoc />
 public class CryptographyService : ICryptographyService
 {
     private const int _hashSize = 64;
 
     public CryptographyService() { }
 
+    /// <inheritdoc />
     public string GenerateSalt()
     {
         var buffer = new byte[_hashSize];
@@ -19,6 +21,7 @@ public class CryptographyService : ICryptographyService
         return Convert.ToBase64String(buffer);
     }
 
+    /// <inheritdoc />
     public string HashPassword(string password, string salt)
     {
         var argon2 = new Argon2i(Encoding.UTF8.GetBytes(password))

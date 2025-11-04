@@ -24,7 +24,7 @@ public class SignOutUseCase : ISignOutUseCase
     public async Task<SignOutResponse> ExecuteAsync(SignOutRequest request)
     {
         // 1. Проверяем, что пользователь существует
-        var user = await _authRepository.GetUserByUserId(request.UserId);
+        var user = await _authRepository.GetUserByUserIdAsync(request.UserId);
         if (user == null)
             return Error(ErrorCodes.UserDoesNotExist);
 
@@ -32,7 +32,7 @@ public class SignOutUseCase : ISignOutUseCase
         if (user.RefreshToken != null)
         {
             user.RefreshToken.Active = false;
-            await _authRepository.UpdateUser(user);
+            await _authRepository.UpdateUserAsync(user);
         }
 
         _logger.LogInformation("Пользователь {UserId} успешно вышел из системы.", user.Id);
