@@ -45,7 +45,7 @@ public class CreateUserUseCase : ICreateUserUseCase
         var salt = _cryptographyService.GenerateSalt();
         var now = DateTime.UtcNow;
 
-        var user = new UserDal
+        var user = new UserModel
         {
             Id = Guid.NewGuid(),
             Email = request.Email,
@@ -71,13 +71,13 @@ public class CreateUserUseCase : ICreateUserUseCase
     /// <summary>
     /// Преобразует список claim из запроса в доменные объекты.
     /// </summary>
-    private static IList<ClaimDal> ToClaims(IList<Claim>? requestClaims)
+    private static IList<ClaimModel> ToClaims(IList<Claim>? requestClaims)
     {
         if (requestClaims == null || requestClaims.Count == 0)
-            return new List<ClaimDal>();
+            return new List<ClaimModel>();
 
         return requestClaims
-            .Select(c => new ClaimDal
+            .Select(c => new ClaimModel
             {
                 Type = c.Type,
                 Value = c.Value

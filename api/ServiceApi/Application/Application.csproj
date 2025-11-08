@@ -20,4 +20,13 @@
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.14.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="UseCases\User\ChangeUserPassword\Request\" />
+      <Folder Include="UseCases\User\ChangeUserPassword\Response\" />
+      <Folder Include="UseCases\User\GetUserInfo\Request\" />
+      <Folder Include="UseCases\User\GetUserInfo\Response\" />
+      <Folder Include="UseCases\User\UpdateUserInfo\Request\" />
+      <Folder Include="UseCases\User\UpdateUserInfo\Response\" />
+    </ItemGroup>
+
 </Project>

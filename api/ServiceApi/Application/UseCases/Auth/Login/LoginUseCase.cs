@@ -63,19 +63,19 @@ public class LoginUseCase : ILoginUseCase
     /// <summary>
     /// Проверяет соответствие пароля, введённого пользователем, хешу, сохранённому в БД.
     /// </summary>
-    private bool AreCredentialsValid(string inputPassword, UserDal userDal)
+    private bool AreCredentialsValid(string inputPassword, UserModel userModel)
     {
-        var computedHash = _cryptographyService.HashPassword(inputPassword, userDal.Salt);
-        return computedHash == userDal.Password;
+        var computedHash = _cryptographyService.HashPassword(inputPassword, userModel.Salt);
+        return computedHash == userModel.Password;
     }
 
     /// <summary>
     /// Создаёт новый refresh token с параметрами из AuthTokenService.
     /// </summary>
-    private async Task<RefreshTokenDal> CreateRefreshTokenAsync()
+    private async Task<RefreshTokenModel> CreateRefreshTokenAsync()
     {
         var lifetimeMinutes = await _authTokenService.GetRefreshTokenLifetimeInMinutes();
-        return new RefreshTokenDal
+        return new RefreshTokenModel
         {
             Value = await _authTokenService.GenerateRefreshToken(),
             Active = true,

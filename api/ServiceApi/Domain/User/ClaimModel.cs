@@ -4,7 +4,7 @@ namespace Domain.User;
 /// Представляет право или роль пользователя.
 /// Используется для авторизации и контроля доступа.
 /// </summary>
-public class ClaimDal
+public class ClaimModel
 {
     /// <summary>
     /// Идентификатор права

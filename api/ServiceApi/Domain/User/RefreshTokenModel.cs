@@ -4,7 +4,7 @@ namespace Domain.User;
 /// Refresh-токен для пользователя.
 /// Используется для получения новой пары JWT после истечения старого токена.
 /// </summary>
-public class RefreshTokenDal
+public class RefreshTokenModel
 {
     /// <summary>
     /// Идентификатор токена

@@ -19,21 +19,21 @@ public class AuthRepository : IAuthRepository
     }
 
     /// <inheritdoc />
-    public async Task<UserDal?> GetUserByEmailAsync(string email)
+    public async Task<UserModel?> GetUserByEmailAsync(string email)
     {
-        var sql = $@"SELECT * FROM ""{nameof(UserDal)}"" 
-                    WHERE ""{nameof(UserDal.Email)}"" = @Email";
+        var sql = $@"SELECT * FROM ""{nameof(UserModel)}"" 
+                    WHERE ""{nameof(UserModel.Email)}"" = @Email";
         
-        var user = await _dbConnection.QueryFirstOrDefaultAsync<UserDal>(sql, new { Email = email });
+        var user = await _dbConnection.QueryFirstOrDefaultAsync<UserModel>(sql, new { Email = email });
         
         if (user != null)
         {
-            user.Claims = (await _dbConnection.QueryAsync<ClaimDal>(
-                $@"SELECT * FROM ""{nameof(ClaimDal)}"" WHERE ""{nameof(ClaimDal.UserId)}"" = @UserId",
+            user.Claims = (await _dbConnection.QueryAsync<ClaimModel>(
+                $@"SELECT * FROM ""{nameof(ClaimModel)}"" WHERE ""{nameof(ClaimModel.UserId)}"" = @UserId",
                 new { UserId = user.Id })).ToList();
 
-            user.RefreshToken = await _dbConnection.QueryFirstOrDefaultAsync<RefreshTokenDal>(
-                $@"SELECT * FROM ""{nameof(RefreshTokenDal)}"" WHERE ""{nameof(RefreshTokenDal.UserId)}"" = @UserId",
+            user.RefreshToken = await _dbConnection.QueryFirstOrDefaultAsync<RefreshTokenModel>(
+                $@"SELECT * FROM ""{nameof(RefreshTokenModel)}"" WHERE ""{nameof(RefreshTokenModel.UserId)}"" = @UserId",
                 new { UserId = user.Id });
         }
         
@@ -41,21 +41,21 @@ public class AuthRepository : IAuthRepository
     }
 
     /// <inheritdoc />
-    public async Task<UserDal?> GetUserByUserIdAsync(Guid id)
+    public async Task<UserModel?> GetUserByUserIdAsync(Guid id)
     {
-        var sql = $@"SELECT * FROM ""{nameof(UserDal)}""
-                    WHERE ""{nameof(UserDal.Id)}"" = @id";
+        var sql = $@"SELECT * FROM ""{nameof(UserModel)}""
+                    WHERE ""{nameof(UserModel.Id)}"" = @id";
         
-        var user = await _dbConnection.QuerySingleOrDefaultAsync<UserDal>(sql, new { Id = id });
+        var user = await _dbConnection.QuerySingleOrDefaultAsync<UserModel>(sql, new { Id = id });
         
         if (user != null)
         {
-            user.Claims = (await _dbConnection.QueryAsync<ClaimDal>(
-                $@"SELECT * FROM ""{nameof(ClaimDal)}"" WHERE ""{nameof(ClaimDal.UserId)}"" = @UserId",
+            user.Claims = (await _dbConnection.QueryAsync<ClaimModel>(
+                $@"SELECT * FROM ""{nameof(ClaimModel)}"" WHERE ""{nameof(ClaimModel.UserId)}"" = @UserId",
                 new { UserId = user.Id })).ToList();
 
-            user.RefreshToken = await _dbConnection.QueryFirstOrDefaultAsync<RefreshTokenDal>(
-                $@"SELECT * FROM ""{nameof(RefreshTokenDal)}"" WHERE ""{nameof(RefreshTokenDal.UserId)}"" = @UserId",
+            user.RefreshToken = await _dbConnection.QueryFirstOrDefaultAsync<RefreshTokenModel>(
+                $@"SELECT * FROM ""{nameof(RefreshTokenModel)}"" WHERE ""{nameof(RefreshTokenModel.UserId)}"" = @UserId",
                 new { UserId = user.Id });
         }
         
@@ -63,125 +63,125 @@ public class AuthRepository : IAuthRepository
     }
 
     /// <inheritdoc />
-    public async Task CreateUserAsync(UserDal userDal)
+    public async Task CreateUserAsync(UserModel userModel)
     {
-        var sql = $@"INSERT INTO ""{nameof(UserDal)}"" 
+        var sql = $@"INSERT INTO ""{nameof(UserModel)}"" 
                 VALUES (@Id, @Email, @Phone, @Password, @Salt, @Name, @LastName, @CreateAt, @UpdateAt)";
         
         await _dbConnection.ExecuteAsync(sql, new
         {
-            userDal.Id,
-            userDal.Email,
-            userDal.Phone,
-            userDal.Password,
-            userDal.Salt,
-            userDal.Name,
-            userDal.LastName,
-            userDal.CreateAt,
-            userDal.UpdateAt
+            userModel.Id,
+            userModel.Email,
+            userModel.Phone,
+            userModel.Password,
+            userModel.Salt,
+            userModel.Name,
+            userModel.LastName,
+            userModel.CreateAt,
+            userModel.UpdateAt
         });
         
-        if (userDal.Claims != null && userDal.Claims.Any())
+        if (userModel.Claims != null && userModel.Claims.Any())
         {
-            foreach (var claim in userDal.Claims)
+            foreach (var claim in userModel.Claims)
             {
                 if (claim.Id == Guid.Empty)
                 {
                     claim.Id = Guid.NewGuid();
                 }
                 
-                claim.UserId = userDal.Id;
+                claim.UserId = userModel.Id;
             }
             
-            var claimsSql = $@"INSERT INTO ""{nameof(ClaimDal)}"" 
+            var claimsSql = $@"INSERT INTO ""{nameof(ClaimModel)}"" 
                                VALUES (@Id, @UserId, @Type, @Value)";
-            await _dbConnection.ExecuteAsync(claimsSql, userDal.Claims);
+            await _dbConnection.ExecuteAsync(claimsSql, userModel.Claims);
         }
 
-        if (userDal.RefreshToken != null)
+        if (userModel.RefreshToken != null)
         {
-            if (userDal.RefreshToken.Id == Guid.Empty)
+            if (userModel.RefreshToken.Id == Guid.Empty)
             {
-                userDal.RefreshToken.Id = Guid.NewGuid();
+                userModel.RefreshToken.Id = Guid.NewGuid();
             }
             
-            userDal.RefreshToken.UserId = userDal.Id;
+            userModel.RefreshToken.UserId = userModel.Id;
             
-            var tokenSql = $@"INSERT INTO ""{nameof(RefreshTokenDal)}""
+            var tokenSql = $@"INSERT INTO ""{nameof(RefreshTokenModel)}""
                               VALUES (@Id, @UserId, @Value, @Active, @ExpirationDate)";
-            await _dbConnection.ExecuteAsync(tokenSql, userDal.RefreshToken);
+            await _dbConnection.ExecuteAsync(tokenSql, userModel.RefreshToken);
         }
     }
 
     /// <inheritdoc />
-    public async Task UpdateUserAsync(UserDal userDal)
+    public async Task UpdateUserAsync(UserModel userModel)
     {
         var sql = $@"
-            UPDATE ""{nameof(UserDal)}""
-            SET ""{nameof(UserDal.Email)}"" = @Email,
-                ""{nameof(UserDal.Phone)}"" = @Phone,
-                ""{nameof(UserDal.Password)}"" = @Password,
-                ""{nameof(UserDal.Salt)}"" = @Salt,
-                ""{nameof(UserDal.Name)}"" = @Name,
-                ""{nameof(UserDal.LastName)}"" = @LastName,
-                ""{nameof(UserDal.UpdateAt)}"" = @UpdateAt
-            WHERE ""{nameof(UserDal.Id)}"" = @Id";
+            UPDATE ""{nameof(UserModel)}""
+            SET ""{nameof(UserModel.Email)}"" = @Email,
+                ""{nameof(UserModel.Phone)}"" = @Phone,
+                ""{nameof(UserModel.Password)}"" = @Password,
+                ""{nameof(UserModel.Salt)}"" = @Salt,
+                ""{nameof(UserModel.Name)}"" = @Name,
+                ""{nameof(UserModel.LastName)}"" = @LastName,
+                ""{nameof(UserModel.UpdateAt)}"" = @UpdateAt
+            WHERE ""{nameof(UserModel.Id)}"" = @Id";
 
         await _dbConnection.ExecuteAsync(sql, new
         {
-            userDal.Email,
-            userDal.Phone,
-            userDal.Password,
-            userDal.Salt,
-            userDal.Name,
-            userDal.LastName,
+            userModel.Email,
+            userModel.Phone,
+            userModel.Password,
+            userModel.Salt,
+            userModel.Name,
+            userModel.LastName,
             UpdateAt = DateTime.UtcNow,
-            userDal.Id
+            userModel.Id
         });
         
-        if (userDal.RefreshToken != null)
+        if (userModel.RefreshToken != null)
         {
-            if (userDal.RefreshToken.Id == Guid.Empty)
+            if (userModel.RefreshToken.Id == Guid.Empty)
             {
-                userDal.RefreshToken.Id = Guid.NewGuid();
+                userModel.RefreshToken.Id = Guid.NewGuid();
             }
             
-            userDal.RefreshToken.UserId = userDal.Id;
+            userModel.RefreshToken.UserId = userModel.Id;
             
             var tokenSql = $@"
-                UPDATE ""{nameof(RefreshTokenDal)}""
-                SET ""{nameof(RefreshTokenDal.Value)}"" = @Value,
-                    ""{nameof(RefreshTokenDal.Active)}"" = @Active,
-                    ""{nameof(RefreshTokenDal.ExpirationDate)}"" = @ExpirationDate
-                WHERE ""{nameof(RefreshTokenDal.UserId)}"" = @UserId";
+                UPDATE ""{nameof(RefreshTokenModel)}""
+                SET ""{nameof(RefreshTokenModel.Value)}"" = @Value,
+                    ""{nameof(RefreshTokenModel.Active)}"" = @Active,
+                    ""{nameof(RefreshTokenModel.ExpirationDate)}"" = @ExpirationDate
+                WHERE ""{nameof(RefreshTokenModel.UserId)}"" = @UserId";
 
             await _dbConnection.ExecuteAsync(tokenSql, new
             {
-                userDal.RefreshToken.Value,
-                userDal.RefreshToken.Active,
-                userDal.RefreshToken.ExpirationDate,
-                UserId = userDal.Id
+                userModel.RefreshToken.Value,
+                userModel.RefreshToken.Active,
+                userModel.RefreshToken.ExpirationDate,
+                UserId = userModel.Id
             });
         }
 
-        if (userDal.Claims != null && userDal.Claims.Any())
+        if (userModel.Claims != null && userModel.Claims.Any())
         {
-            foreach (var claim in userDal.Claims)
+            foreach (var claim in userModel.Claims)
             {
                 if (claim.Id == Guid.Empty)
                 {
                     claim.Id = Guid.NewGuid();
                 }
                 
-                claim.UserId = userDal.Id;
+                claim.UserId = userModel.Id;
             }
             
-            var deleteSql = $@"DELETE FROM ""{nameof(ClaimDal)}"" WHERE ""{nameof(ClaimDal.UserId)}"" = @UserId";
-            await _dbConnection.ExecuteAsync(deleteSql, new { UserId = userDal.Id });
+            var deleteSql = $@"DELETE FROM ""{nameof(ClaimModel)}"" WHERE ""{nameof(ClaimModel.UserId)}"" = @UserId";
+            await _dbConnection.ExecuteAsync(deleteSql, new { UserId = userModel.Id });
 
-            var insertSql = $@"INSERT INTO ""{nameof(ClaimDal)}""
+            var insertSql = $@"INSERT INTO ""{nameof(ClaimModel)}""
                                VALUES (@Id, @UserId, @Type, @Value)";
-            await _dbConnection.ExecuteAsync(insertSql, userDal.Claims);
+            await _dbConnection.ExecuteAsync(insertSql, userModel.Claims);
         }
     }
 }

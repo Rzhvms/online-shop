@@ -10,12 +10,12 @@ public interface IAuthTokenService
     /// <summary>
     /// Генерация ID токена для пользователя
     /// </summary>
-    Task<string> GenerateIdToken(UserDal userDal);
+    Task<string> GenerateIdToken(UserModel userModel);
     
     /// <summary>
     /// Генерация Access Token для пользователя
     /// </summary>
-    Task<string> GenerateAccessToken(UserDal userDal);
+    Task<string> GenerateAccessToken(UserModel userModel);
     
     /// <summary>
     /// Генерация нового Refresh Token

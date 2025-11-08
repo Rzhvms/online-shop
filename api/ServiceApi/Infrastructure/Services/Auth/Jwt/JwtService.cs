@@ -22,7 +22,7 @@ public class JwtService : IAuthTokenService
     }
 
     /// <inheritdoc />
-    public Task<string> GenerateAccessToken(UserDal userDal)
+    public Task<string> GenerateAccessToken(UserModel userModel)
     {
         var signingCredentials = new SigningCredentials(
             key: _rsaSecurityKey,
@@ -32,10 +32,10 @@ public class JwtService : IAuthTokenService
         var claimsIdentity = new ClaimsIdentity();
 
         // Access Token must only carry the user Id
-        claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userDal.Id.ToString()));
+        claimsIdentity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userModel.Id.ToString()));
 
         // Add scope claim, which contains an array of scopes
-        var scope = userDal.Claims.SingleOrDefault(c => c.Type == "scope");
+        var scope = userModel.Claims.SingleOrDefault(c => c.Type == "scope");
         if (scope != null)
             claimsIdentity.AddClaim(new Claim("scope", string.Join(" ", scope.Value)));
 
@@ -56,7 +56,7 @@ public class JwtService : IAuthTokenService
     }
 
     /// <inheritdoc />
-    public Task<string> GenerateIdToken(UserDal userDal)
+    public Task<string> GenerateIdToken(UserModel userModel)
     {
         var signingCredentials = new SigningCredentials(
             key: _rsaSecurityKey,
@@ -65,14 +65,14 @@ public class JwtService : IAuthTokenService
 
         var claimsIdentity = new ClaimsIdentity();
 
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, userDal.Id.ToString()));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, userDal.Name));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Email, userDal.Email));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.GivenName, userDal.Name));
-        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Surname, userDal.LastName));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, userModel.Id.ToString()));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Name, userModel.Name));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Email, userModel.Email));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.GivenName, userModel.Name));
+        claimsIdentity.AddClaim(new System.Security.Claims.Claim(ClaimTypes.Surname, userModel.LastName));
 
         // Add custom claims if any
-        foreach (var c in userDal.Claims ?? System.Linq.Enumerable.Empty<Domain.User.ClaimDal>())
+        foreach (var c in userModel.Claims ?? System.Linq.Enumerable.Empty<Domain.User.ClaimModel>())
         {
             claimsIdentity.AddClaim(new System.Security.Claims.Claim(c.Type, c.Value));
         }

@@ -6,7 +6,7 @@ namespace Domain.User;
 /// Пользователь системы.
 /// Содержит данные для аутентификации, персональные данные и права доступа.
 /// </summary>
-public class UserDal
+public class UserModel
 {
     /// <summary>
     /// Идентификатор пользователя
@@ -66,19 +66,19 @@ public class UserDal
     /// <summary>
     /// Список прав/роль пользователя.
     /// </summary>
-    public IList<ClaimDal>? Claims { get; set; }
+    public IList<ClaimModel>? Claims { get; set; }
 
     /// <summary>
     /// Связанный refresh-токен для обновления JWT.
     /// </summary>
-    public RefreshTokenDal? RefreshToken { get; set; }
+    public RefreshTokenModel? RefreshToken { get; set; }
     
     /// <summary>
     /// Конструктор по умолчанию. Инициализирует коллекции.
     /// </summary>
-    public UserDal()
+    public UserModel()
     {
-        Claims = new List<ClaimDal>();
-        RefreshToken = new RefreshTokenDal();
+        Claims = new List<ClaimModel>();
+        RefreshToken = new RefreshTokenModel();
     }
 }
