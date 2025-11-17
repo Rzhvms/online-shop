@@ -1,3 +1,13 @@
+using Application.Extensions;
+using Application.UseCases.User.ChangeUserPassword;
+using Application.UseCases.User.ChangeUserPassword.Request;
+using Application.UseCases.User.ChangeUserPassword.Response;
+using Application.UseCases.User.GetUserInfo;
+using Application.UseCases.User.GetUserInfo.Request;
+using Application.UseCases.User.GetUserInfo.Response;
+using Application.UseCases.User.UpdateUserInfo;
+using Application.UseCases.User.UpdateUserInfo.Request;
+using Application.UseCases.User.UpdateUserInfo.Response;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +21,18 @@ namespace Api.Controllers.UserController;
 [Route("api/user")]
 public class UserController : ControllerBase
 {
-    public UserController()
+    private readonly IGetUserInfoUseCase _getUserInfoUseCase;
+    private readonly IUpdateUserInfoUseCase _updateUserInfoUseCase;
+    private readonly IChangeUserPasswordUseCase _changeUserPasswordUseCase;
+    
+    public UserController(
+        IGetUserInfoUseCase getUserInfoUseCase,
+        IUpdateUserInfoUseCase updateUserInfoUseCase,
+        IChangeUserPasswordUseCase changeUserPasswordUseCase)
     {
-
+        _getUserInfoUseCase = getUserInfoUseCase;
+        _updateUserInfoUseCase = updateUserInfoUseCase;
+        _changeUserPasswordUseCase = changeUserPasswordUseCase;
     }
 
     /// <summary>
@@ -21,28 +40,29 @@ public class UserController : ControllerBase
     /// </summary>
     [HttpGet("me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task GetUserInfoAsync()
+    public async Task<GetUserInfoResponse> GetUserInfoAsync()
     {
-
+        var id = User.GetUserId();
+        return await _getUserInfoUseCase.ExecuteAsync(new GetUserInfoRequest { Id = id });
     }
 
     /// <summary>
-    /// Изменить базовую информацию о пользователе (UserModel)
+    /// Изменить базовую информацию о пользователе (UserModel) (Phone, Name, LastName)
     /// </summary>
-    [HttpPut("me")]
+    [HttpPatch("me")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task UpdateUserInfoAsync()
+    public async Task<UpdateUserInfoResponse> UpdateUserInfoAsync(UpdateUserInfoRequest request)
     {
-        
+        return await _updateUserInfoUseCase.ExecuteAsync(request);
     }
 
     /// <summary>
     /// Изменить пароль
     /// </summary>
-    [HttpPut("me/password")] 
+    [HttpPatch("me/password")] 
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task ChangeUserPasswordAsync()
+    public async Task<ChangeUserPasswordResponse> ChangeUserPasswordAsync(ChangeUserPasswordRequest request)
     {
-        
+        return await _changeUserPasswordUseCase.ExecuteAsync(request);
     }
 }

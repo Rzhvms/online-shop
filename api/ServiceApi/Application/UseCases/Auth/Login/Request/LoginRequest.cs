@@ -12,6 +12,7 @@ public record LoginRequest
     /// </summary>
     [Required]
     [MaxLength(50)]
+    [EmailAddress]
     public required string Email { get; set; }
     
     /// <summary>

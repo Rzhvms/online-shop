@@ -25,7 +25,7 @@ public class UserProfileController : ControllerBase
     {
         
     }
-
+    
     /// <summary>
     /// Обновить профиль пользователя.
     /// </summary>

@@ -5,6 +5,7 @@ using Application.Ports.Services;
 using FluentMigrator.Runner;
 using Infrastructure.Migrations;
 using Infrastructure.Repositories.Auth;
+using Infrastructure.Repositories.User;
 using Infrastructure.Services.Auth.Cryptography;
 using Infrastructure.Services.Auth.Jwt;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +46,7 @@ public static class InfraForStartup
 
         // Репозитории
         services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         // FluentMigrator
         services.AddFluentMigratorCore()
