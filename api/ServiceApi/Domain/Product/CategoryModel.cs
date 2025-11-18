@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Product;
 
 /// <summary>
@@ -13,6 +15,7 @@ public record CategoryModel
     /// <summary>
     /// Название категории
     /// </summary>
+    [MaxLength(100)]
     public string? Name { get; init; }
     
     /// <summary>

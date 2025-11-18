@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Product;
 
 /// <summary>
@@ -23,11 +25,13 @@ public record ProductReviewModel
     /// <summary>
     /// Рейтинг
     /// </summary>
+    [Range(1, 5)]
     public int Rating { get; init; }
     
     /// <summary>
     /// Комментарий
     /// </summary>
+    [MaxLength(300)]
     public string? Message { get; init; }
     
     /// <summary>

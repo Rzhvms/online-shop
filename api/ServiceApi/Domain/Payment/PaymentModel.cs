@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Domain.Payment;
 
 /// <summary>
@@ -23,6 +25,7 @@ public record PaymentModel
     /// <summary>
     /// Сумма платежа
     /// </summary>
+    [Range(0, double.MaxValue)]
     public decimal Amount { get; init; }
     
     /// <summary>
@@ -58,6 +61,7 @@ public record PaymentModel
     /// <summary>
     /// Сумма возврата
     /// </summary>
+    [Range(0, double.MaxValue)]
     public decimal RefundAmount { get; init; }
     
     /// <summary>

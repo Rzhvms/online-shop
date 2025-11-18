@@ -16,7 +16,7 @@ public record ProductImageModel
     public Guid ProductId { get; init; }
     
     /// <summary>
-    /// Ссыкла на изображение
+    /// Ссылка на изображение
     /// </summary>
     public string? Url { get; init; }
     
