@@ -1,18 +1,9 @@
 <template>
-  <div class="w-screen h-screen bg-[#F4F4F4] flex items-center justify-center">
+  <div class="auth-container">
     <!-- Карточка -->
-    <div
-      class="bg-white rounded-3xl shadow-lg flex flex-col items-center p-8"
-      style="width: 410px; height: 508px; background-color: #FFFFFF; border-radius: 32px;"
-    >
+    <div class="auth-card">
       <!-- Заголовок -->
-      <h1 class="text-2xl font-semibold mb-6 text-center"
-        style="
-          margin-top: 40px;
-          margin-bottom: 32px;
-          color: #3C3C3C"
-        >Вход
-      </h1>
+      <h1 class="auth-title">Вход</h1>
 
       <!-- Ошибка глобальная -->
       <div v-if="globalError" class="mb-4 text-center text-red-500 font-medium w-full">
@@ -20,13 +11,11 @@
       </div>
 
       <!-- Форма -->
-      <form @submit.prevent="handleSubmit" class="flex flex-col gap-4 w-full items-center">
+      <form @submit.prevent="handleSubmit" class="auth-form">
 
       <!-- Email -->
-      <div class="relative w-[362px] h-[48px] mb-[12px]">
-        <div
-          class="flex items-center w-full h-full border rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-orange-400"
-          style="border:none; background-color: #F4F4F4; border-radius: 18px;"
+      <div class="auth-email">
+        <div class="auth-email-div"
           :class="errors.email ? 'border-red-500' : 'border-gray-300'"
         >
           <input
@@ -159,6 +148,7 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
+@import './auth.css';
 .email-placeholder::placeholder {
   transform: translateX(20px);
 }
