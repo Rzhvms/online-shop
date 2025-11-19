@@ -22,33 +22,27 @@
             v-model="email"
             type="email"
             placeholder="Почта"
-            class="flex-1 bg-transparent outline-none text-black"
-            style="border: none; margin-left: 20px; font-size: 16px;"
-          />
+            class="auth-email-input"/>
         </div>
         <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
       </div>
 
         <!-- Password -->
-        <div class="relative w-[362px] h-[48px]">
+        <div class="auth-email">
           <div
-            class="flex items-center w-full h-full border rounded-xl px-4 py-2 focus-within:ring-2 focus-within:ring-orange-400"
-            style="border:none; background-color: #F4F4F4; border-radius: 18px;"
+            class="auth-email-div"
             :class="errors.password ? 'border-red-500' : 'border-gray-300'"
           >
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Пароль"
-              class="flex-1 bg-transparent outline-none text-black"
-              style="border: none; margin-left: 20px; font-size: 16px;"
-            />
+              class="auth-email-input"/>
 
             <!-- SHOW / HIDE внутри поля -->
             <button
               type="button"
-              class="ml-2 w-6 h-6 flex items-center justify-center text-gray-500 hover:text-black"
-              style="background: none; border: none; padding: 0; padding-right: 15px;"
+              class="auth-button"
               @click="showPassword = !showPassword"
             >
               {{ showPassword ? '🙈' : '👁️' }}
@@ -85,10 +79,7 @@
         <!-- Submit -->
         <button
           type="submit"
-          class="bg-orange-500 text-white rounded-xl transition hover:bg-orange-600 font-medium"
-          style="width: 362px; height: 48px; margin-top: 32px; background-color: #FF7A00;
-          color: white; border-radius: 18px; border: none; font-size: 18px; font-weight: 600;"
-        >
+          class="auth-button-submit">
           Войти
         </button>
       </form>
