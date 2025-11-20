@@ -69,6 +69,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { sendVerificationEmail } from "@/services/api";
 
 const router = useRouter();
 const email = ref("");
@@ -81,7 +82,7 @@ const globalError = ref(null);
 
 const passwordStrength = ref(0);
 
-const handleSubmit = () => {
+async function handleSubmit() {
   errors.value = { email: null, password: null };
   globalError.value = null;
 
@@ -93,11 +94,18 @@ const handleSubmit = () => {
   }
 
   if (!errors.value.email && !errors.value.password) {
-    if (email.value !== "test@mail.com" || password.value !== "123456") {
-      globalError.value = "Аккаунт не найден";
+    try {
+      // const email_response = await sendVerificationEmail(email.value);
+      // if (!email_response.ok) {
+      //   throw new Error("Не удалось отправить письмо");
+      // }
+      // localStorage.setItem("email", email.value);
+      router.push("/confirm-email");
+    } catch (error) {
+      console.log(error);
+      globalError.value = error.message;
       return;
     }
-    console.log("Успешный вход:", email.value, password.value, remember.value);
   }
 };
 

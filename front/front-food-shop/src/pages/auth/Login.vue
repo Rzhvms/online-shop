@@ -65,6 +65,7 @@
                     background: white;
                     color: #ff7a00;
                     font-size: 16px;"
+                  onclick="handleForgot"
                   >Забыли пароль?
           </button>
         </div>
@@ -99,6 +100,7 @@
 <script setup>
 import { ref } from "vue";
 import router from "@/router";
+import { login } from "@/services/api";
 
 const email = ref("");
 const password = ref("");
@@ -120,9 +122,16 @@ const handleSubmit = () => {
   }
 
   if (!errors.value.email && !errors.value.password) {
-    if (email.value !== "test@mail.com" || password.value !== "123456") {
-      globalError.value = "Аккаунт не найден";
-      return;
+    try {
+      const email_response = login(email.value, password.value);
+      if (!email_response.ok) {
+        throw new Error("Не удалось войти в систему");
+      }
+      localStorage.setItem("email", email.value);
+      router.push("/finish-registration");
+    } catch (error) {
+      console.log(error);
+      globalError.value = error.message;
     }
     console.log("Успешный вход:", email.value, password.value, remember.value);
   }
@@ -130,6 +139,10 @@ const handleSubmit = () => {
 
 const handleRegister = () => {
   router.push("/register");
+};
+
+const handleForgot = () => {
+  router.push("/forgot-password");
 };
 </script>
 
