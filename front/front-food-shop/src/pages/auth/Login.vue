@@ -6,33 +6,26 @@
       <h1 class="auth-title">Вход</h1>
 
       <!-- Ошибка глобальная -->
-      <div v-if="globalError" class="mb-4 text-center text-red-500 font-medium w-full">
-        {{ globalError }}
-      </div>
+      <div v-if="globalError" class="global-error">{{ globalError }}</div>
 
       <!-- Форма -->
       <form @submit.prevent="handleSubmit" class="auth-form">
 
       <!-- Email -->
       <div class="auth-email">
-        <div class="auth-email-div"
-          :class="errors.email ? 'border-red-500' : 'border-gray-300'"
-        >
+        <div class="auth-email-div {{ errors.email ? 'error' : '' }}">
           <input
             v-model="email"
             type="email"
             placeholder="Почта"
             class="auth-email-input"/>
         </div>
-        <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
+        <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
       </div>
 
         <!-- Password -->
-        <div class="auth-email">
-          <div
-            class="auth-email-div"
-            :class="errors.password ? 'border-red-500' : 'border-gray-300'"
-          >
+        <div class="auth-email" style="margin-bottom: 0px;">
+          <div class="auth-email-div {{ errors.password ? 'error' : '' }}">
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
@@ -48,7 +41,7 @@
               {{ showPassword ? '🙈' : '👁️' }}
             </button>
           </div>
-          <p v-if="errors.password" class="text-red-500 text-sm mt-1">{{ errors.password }}</p>
+          <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
         </div>
 
         <!-- Remember + Forgot -->
@@ -90,15 +83,12 @@
         class="mt-4 text-sm text-orange-500 hover:underline rounded-xl"
         style="width: 362px; height: 48px; margin-top: 12px; background-color: F4F4F4;
         color: #555555; border-radius: 18px; border: none; font-size: 18px; font-weight: 600;"
+        @click="handleRegister"
       >
         Создать аккаунт
       </button>
 
-      <p class="text-xs text-gray-400 mt-2 text-center"
-        style="
-          font-size: 12px;
-          color: #7A7A7A;
-        ">
+      <p class="info-message">
         По всем вопросам можете обращаться:<br>
         adminexample@gmail.com
       </p>
@@ -108,6 +98,7 @@
 
 <script setup>
 import { ref } from "vue";
+import router from "@/router";
 
 const email = ref("");
 const password = ref("");
@@ -135,6 +126,10 @@ const handleSubmit = () => {
     }
     console.log("Успешный вход:", email.value, password.value, remember.value);
   }
+};
+
+const handleRegister = () => {
+  router.push("/register");
 };
 </script>
 
