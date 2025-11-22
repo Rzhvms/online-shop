@@ -16,6 +16,27 @@ var jwtSettings = jwtSettingsSection.Get<JwtSettings>();
 // Читаем строку подключения из appsettings
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+// Настройка CORS
+builder.Services.AddCors(options =>
+{
+    // options.AddPolicy("AllowSpecificOrigin", policy =>
+    // {
+    //     policy.WithOrigins(
+    //         // TODO: указать допустимые адреса
+    //         .AllowAnyHeader()
+    //         .AllowAnyMethod()
+    //         .AllowCredentials();
+    // });
+
+    // Разрешаем все для разработки
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Добавление слоев
 builder.Services.AddInfrastructureModule(jwtSettings, connectionString);
 builder.Services.AddApplicationModule();
@@ -50,7 +71,7 @@ builder.Services.AddSwaggerGen(c =>
                     Id = "Bearer"
                 }
             },
-            Array.Empty<string>()
+            []
         }
     });
 });
@@ -87,6 +108,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting();
+
+// Используем CORS политику
+// app.UseCors("AllowSpecificOrigin");
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

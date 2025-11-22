@@ -26,4 +26,9 @@ public interface IAuthRepository
     /// Обновляет данные существующего пользователя.
     /// </summary>
     Task UpdateUserAsync(UserModel userModel);
+
+    /// <summary>
+    /// Обновляем данный пользователя (для завершения регистрации)
+    /// </summary>
+    Task UpdateUserForFinalRegistrationAsync(Guid id, string name, string lastName, string gender, string phone);
 }

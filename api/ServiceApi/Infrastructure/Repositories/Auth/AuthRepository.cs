@@ -184,4 +184,22 @@ public class AuthRepository : IAuthRepository
             await _dbConnection.ExecuteAsync(insertSql, userModel.Claims);
         }
     }
+
+    /// <inheritdoc />
+    public async Task UpdateUserForFinalRegistrationAsync(Guid id, string name, string lastName, string gender, string phone)
+    {
+        var sqlUser = $@"UPDATE ""{nameof(UserModel)}""
+                    SET ""{nameof(UserModel.Name)}"" = @Name,
+                        ""{nameof(UserModel.LastName)}"" = @LastName,
+                        ""{nameof(UserModel.Phone)}"" = @Phone,
+                        ""{nameof(UserModel.UpdateAt)}"" = @Now
+                    WHERE ""{nameof(UserModel.Id)}"" = @Id";
+        
+        var sqlUserProfile = $@"UPDATE ""{nameof(UserProfileModel)}""
+                    SET ""{nameof(UserProfileModel.Gender)}"" = @Gender
+                    WHERE ""{nameof(UserProfileModel.UserId)}"" = @UserId";
+        
+        await _dbConnection.ExecuteAsync(sqlUser, new { Id = id, Name = name, LastName = lastName, Phone = phone, Now = DateTime.UtcNow });
+        await _dbConnection.ExecuteAsync(sqlUserProfile, new { UserId = id, Gender = gender });
+    }
 }

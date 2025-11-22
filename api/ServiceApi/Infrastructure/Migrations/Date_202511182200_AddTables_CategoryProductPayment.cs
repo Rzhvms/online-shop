@@ -118,6 +118,38 @@ public class Date_202511182200_AddTables_CategoryProductPayment : Migration
     /// <inheritdoc />
     public override void Down()
     {
+        Delete.ForeignKey("FK_ProductReview_Product").OnTable(_productReviewTb);
+        Delete.ForeignKey("FK_ProductReview_User").OnTable(_productReviewTb);
+        Delete.ForeignKey("FK_ProductImage_Product").OnTable(_productImageTb);
+        Delete.ForeignKey("FK_ProductCategory_Category").OnTable(_productCategoryTb);
+        Delete.ForeignKey("FK_ProductCategory_Product").OnTable(_productCategoryTb);
+        Delete.ForeignKey("FK_CategoryParent_CategoryId").OnTable(_categoryTb);
+        Delete.ForeignKey("FK_Payment_User").OnTable(_paymentTb);
+        Delete.ForeignKey("FK_Payment_Order").OnTable(_paymentTb);
         
+        if (Schema.Table(_productReviewTb).Exists())
+        {
+            Delete.Table(_productReviewTb);
+        }
+        
+        if (Schema.Table(_productImageTb).Exists())
+        {
+            Delete.Table(_productImageTb);
+        }
+        
+        if (Schema.Table(_productCategoryTb).Exists())
+        {
+            Delete.Table(_productCategoryTb);
+        }
+        
+        if (Schema.Table(_categoryTb).Exists())
+        {
+            Delete.Table(_categoryTb);
+        }
+        
+        if (Schema.Table(_paymentTb).Exists())
+        {
+            Delete.Table(_paymentTb);
+        }
     }
 }

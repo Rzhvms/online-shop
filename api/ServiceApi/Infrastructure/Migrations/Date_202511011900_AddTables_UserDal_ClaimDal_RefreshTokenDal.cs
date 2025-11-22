@@ -23,10 +23,12 @@ public class Date_202511011900_AddTables_UserDal_ClaimDal_RefreshTokenDal : Migr
                 .WithColumn(nameof(UserModel.Phone)).AsString(20).Nullable()
                 .WithColumn(nameof(UserModel.Password)).AsString().NotNullable()
                 .WithColumn(nameof(UserModel.Salt)).AsString().NotNullable()
-                .WithColumn(nameof(UserModel.Name)).AsString(50).NotNullable()
-                .WithColumn(nameof(UserModel.LastName)).AsString(50).NotNullable()
+                .WithColumn(nameof(UserModel.Name)).AsString(50).Nullable()
+                .WithColumn(nameof(UserModel.LastName)).AsString(50).Nullable()
                 .WithColumn(nameof(UserModel.CreateAt)).AsDateTime().NotNullable()
                 .WithColumn(nameof(UserModel.UpdateAt)).AsDateTime().Nullable();
+            
+            Create.Index("IX_UserModel_Email_Unique").OnTable(_userTableName).OnColumn(nameof(UserModel.Email)).Unique();
         }
         
         if (!Schema.Table(_claimTableName).Exists())
@@ -51,6 +53,11 @@ public class Date_202511011900_AddTables_UserDal_ClaimDal_RefreshTokenDal : Migr
 
     public override void Down()
     {
+        if (Schema.Table(_userTableName).Exists() && Schema.Table(_userTableName).Index("IX_UserModel_Email_Unique").Exists())
+        {
+            Delete.Index("IX_UserModel_Email_Unique").OnTable(_userTableName);
+        }
+        
         if (Schema.Table(_claimTableName).Exists())
         {
             Delete.Table(_claimTableName);

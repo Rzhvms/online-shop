@@ -51,8 +51,6 @@ public class CreateUserUseCase : ICreateUserUseCase
             Email = request.Email,
             Password = _cryptographyService.HashPassword(request.Password, salt),
             Salt = salt,
-            Name = request.Name,
-            LastName = request.LastName,
             Claims = ToClaims(request.Claims),
             CreateAt = now,
             UpdateAt = now
@@ -66,6 +64,13 @@ public class CreateUserUseCase : ICreateUserUseCase
         {
             UserId = user.Id
         };
+    }
+
+    /// <inheritdoc />
+    public async Task<ContinueRegisterResponse> ContinueRegisterAsync(ContinueRegisterRequest request)
+    {
+        await _authRepository.UpdateUserForFinalRegistrationAsync(request.Id, request.Name, request.LastName, request.Gender, request.Phone);
+        return new ContinueRegisterResponse();
     }
 
     /// <summary>

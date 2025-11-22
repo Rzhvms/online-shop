@@ -73,13 +73,24 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Создание пользователя
+    /// Создание пользователя / регистрация
     /// </summary>
     [AllowAnonymous]
-    [HttpPost("create-user")]
+    [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<CreateUserResponse> CreateUserAsync(CreateUserRequest request)
+    public async Task<CreateUserResponse> RegisterAsync(CreateUserRequest request)
     {
         return await _createUserUseCase.ExecuteAsync(request);
+    }
+    
+    /// <summary>
+    /// Создание пользователя / Завершение регистрации
+    /// </summary>
+    [AllowAnonymous]
+    [HttpPatch("register")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ContinueRegisterResponse> ContinueRegisterAsync(ContinueRegisterRequest request)
+    {
+        return await _createUserUseCase.ContinueRegisterAsync(request);
     }
 }

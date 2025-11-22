@@ -16,10 +16,9 @@ public class UserModel
     /// <summary>
     /// Электронная почта пользователя, используется для логина и уведомлений.
     /// </summary>
-    [Required]
     [EmailAddress]
     [MaxLength(50)]
-    public required string Email { get; set; }
+    public string Email { get; set; }
     
     /// <summary>
     /// Номер телефона пользователя.
@@ -30,28 +29,24 @@ public class UserModel
     /// <summary>
     /// Хэш пароля пользователя.
     /// </summary>
-    [Required]
-    public required string Password { get; set; }
+    public string Password { get; set; }
 
     /// <summary>
     /// Соль для хэширования пароля.
     /// </summary>
-    [Required]
-    public required string Salt { get; set; }
+    public string Salt { get; set; }
 
     /// <summary>
     /// Имя пользователя.
     /// </summary>
     [MaxLength(50)]
-    [Required]
-    public required string Name { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
     /// Фамилия пользователя.
     /// </summary>
     [MaxLength(50)]
-    [Required]
-    public required string LastName { get; set; }
+    public string LastName { get; set; }
 
     /// <summary>
     /// Дата создания пользователя.

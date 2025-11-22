@@ -13,4 +13,9 @@ public interface ICreateUserUseCase
     /// Создает нового пользователя, если email ещё не зарегистрирован.
     /// </summary>
     Task<CreateUserResponse> ExecuteAsync(CreateUserRequest request);
+
+    /// <summary>
+    /// Завершение регистрации
+    /// </summary>
+    Task<ContinueRegisterResponse> ContinueRegisterAsync(ContinueRegisterRequest request);
 }
