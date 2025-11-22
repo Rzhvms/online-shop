@@ -1,95 +1,70 @@
 <template>
-  <div class="auth-container">
-    <!-- Карточка -->
-    <div class="auth-card">
-      <!-- Заголовок -->
-      <h1 class="auth-title">Вход</h1>
+  <div class="page-bg">
+    <div class="login-card">
+      <h1 class="login-title">Вход</h1>
 
-      <!-- Ошибка глобальная -->
-      <div v-if="globalError" class="global-error">{{ globalError }}</div>
-
-      <!-- Форма -->
-      <form @submit.prevent="handleSubmit" class="auth-form">
-
-      <!-- Email -->
-      <div class="auth-email">
-        <div class="auth-email-div {{ errors.email ? 'error' : '' }}">
-          <input
-            v-model="email"
-            type="email"
-            placeholder="Почта"
-            class="auth-email-input"/>
-        </div>
-        <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
+      <!-- Глобальные ошибки -->
+      <div v-if="globalError.length" class="global-error">
+        <ul>
+          <li v-for="(err, index) in globalError" :key="index">{{ err }}</li>
+        </ul>
       </div>
 
+      <form @submit.prevent="handleSubmit" class="form">
+
+        <!-- Email -->
+        <div class="field-wrap">
+          <div :class="['field', errors.email ? 'field-error' : '']">
+            <input
+              v-model="email"
+              type="email"
+              placeholder="Почта"
+              class="input"
+            />
+          </div>
+        </div>
+
         <!-- Password -->
-        <div class="auth-email" style="margin-bottom: 0px;">
-          <div class="auth-email-div {{ errors.password ? 'error' : '' }}">
+        <div class="field-wrap">
+          <div :class="['field', errors.password ? 'field-error' : '']">
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Пароль"
-              class="auth-email-input"/>
-
-            <!-- SHOW / HIDE внутри поля -->
-            <button
-              type="button"
-              class="auth-button"
-              @click="showPassword = !showPassword"
-            >
+              class="input"
+            />
+            <button type="button" class="show-btn" @click="showPassword = !showPassword">
               {{ showPassword ? '🙈' : '👁️' }}
             </button>
           </div>
-          <p v-if="errors.password" class="error-message">{{ errors.password }}</p>
         </div>
 
         <!-- Remember + Forgot -->
-        <div class="flex items-center justify-between w-full mb-2 select-none"
-          style="margin-top: 8px; width: 362px;"
-        >
-          <label class="flex items-center space-x-2 cursor-pointer">
-            <input type="checkbox" 
-                   v-model="remember"
-                   class="w-4 h-4 rounded-sm border-gray-400 border checked:bg-orange-500 checked:border-orange-500 cursor-pointer"
-            />
-            <span class="text-sm"
-              style="color: #3C3C3C;"
-              >Запомнить меня
-            </span>
+        <div class="remember-forgot">
+          <label class="remember">
+            <input type="checkbox" v-model="remember" class="custom-checkbox" />
+            <span>Запомнить меня</span>
           </label>
-          <button type="button" 
-                  class="text-sm text-orange-500 hover:underline"
-                  style="
-                    border: none;
-                    background: white;
-                    color: #ff7a00;
-                    font-size: 16px;"
-                  onclick="handleForgot"
-                  >Забыли пароль?
-          </button>
+          <button type="button" class="forgot-btn" @click="handleForgot">Забыли пароль?</button>
         </div>
 
         <!-- Submit -->
-        <button
-          type="submit"
-          class="auth-button-submit">
+        <button 
+          type="submit" 
+          class="submit-btn"
+          :class="{ 'inactive-btn': !isFormValid }"
+          :disabled="!isFormValid"
+        >
           Войти
         </button>
       </form>
 
       <!-- Create account -->
-      <button
-        type="submit"
-        class="mt-4 text-sm text-orange-500 hover:underline rounded-xl"
-        style="width: 362px; height: 48px; margin-top: 12px; background-color: F4F4F4;
-        color: #555555; border-radius: 18px; border: none; font-size: 18px; font-weight: 600;"
-        @click="handleRegister"
-      >
+      <button class="create-btn" @click="handleRegister">
         Создать аккаунт
       </button>
 
-      <p class="info-message">
+      <p class="contact-text">
         По всем вопросам можете обращаться:<br>
         adminexample@gmail.com
       </p>
@@ -98,7 +73,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import router from "@/router";
 import { login } from "@/services/api";
 
@@ -107,33 +82,41 @@ const password = ref("");
 const remember = ref(false);
 const showPassword = ref(false);
 
-const errors = ref({ email: null, password: null });
-const globalError = ref(null);
+const errors = ref({ email: false, password: false });
+const globalError = ref([]);
 
-const handleSubmit = () => {
-  errors.value = { email: null, password: null };
-  globalError.value = null;
+// Кнопка активна только если введена корректная почта и пароль не пустой
+const isFormValid = computed(() => email.value.includes("@") && password.value.length > 0);
 
-  if (!email.value) errors.value.email = "Указана неправильная почта";
-  if (!password.value) errors.value.password = "Пароль";
+const handleSubmit = async () => {
+  errors.value = { email: false, password: false };
+  globalError.value = [];
 
-  if (email.value && !email.value.includes("@")) {
-    errors.value.email = "Неверный формат почты";
+  if (!email.value) {
+    errors.value.email = true;
+    globalError.value.push("Почта не указана");
+  } else if (!email.value.includes("@")) {
+    errors.value.email = true;
+    globalError.value.push("Неверный формат почты");
   }
 
-  if (!errors.value.email && !errors.value.password) {
-    try {
-      const email_response = login(email.value, password.value);
-      if (!email_response.ok) {
-        throw new Error("Не удалось войти в систему");
-      }
-      localStorage.setItem("email", email.value);
-      router.push("/finish-registration");
-    } catch (error) {
-      console.log(error);
-      globalError.value = error.message;
+  if (!password.value) {
+    errors.value.password = true;
+    globalError.value.push("Пароль не указан");
+  }
+
+  if (globalError.value.length) return;
+
+  try {
+    const email_response = await login(email.value, password.value);
+    if (!email_response.ok) {
+      throw new Error("Вход не удался: неверный логин или пароль");
     }
-    console.log("Успешный вход:", email.value, password.value, remember.value);
+    localStorage.setItem("email", email.value);
+    router.push("/finish-registration");
+  } catch (error) {
+    console.log(error);
+    globalError.value.push(error.message);
   }
 };
 
@@ -148,7 +131,16 @@ const handleForgot = () => {
 
 <style scoped>
 @import './auth.css';
-.email-placeholder::placeholder {
-  transform: translateX(20px);
+
+/* Стили для неактивной кнопки */
+.submit-btn.inactive-btn {
+  background-color: #FFA84C;
+  color: white;
+  cursor: not-allowed;
+}
+
+.submit-btn:enabled:hover {
+  background-color: #ff7a00;
+  color: white;
 }
 </style>

@@ -1,44 +1,49 @@
 <template>
-  <div class="auth-container">
+  <div class="page-bg">
     <!-- Карточка -->
-    <div class="auth-card">
+    <div class="login-card">
       <!-- Заголовок -->
-      <h1 class="auth-title">Восстановление пароля</h1>
+      <h1 class="login-title">Восстановление пароля</h1>
+
+      <!-- Инструкция -->
+      <p class="contact-text" style="margin-bottom: 16px; text-align: center; font-size: 16px;">
+        Введите вашу электронную почту, чтобы <br>
+        получить код подтверждения и восстановить <br>
+        доступ к аккаунту
+      </p>
 
       <!-- Форма -->
-      <form @submit.prevent="handleSubmit" class="auth-form">
-        <p class="info-message">Введите вашу электронную почту, чтобы получить код подтверждения и восстановить доступ к аккаунту</p>  
+      <form @submit.prevent="handleSubmit" class="form">
         <!-- Email -->
-        <div class="auth-email">
-          <div class="auth-email-div {{ errors.email ? 'error' : '' }}">
+        <div class="field-wrap">
+          <div :class="['field', errors.email ? 'field-error' : '']">
             <input
               v-model="email"
               type="email"
               placeholder="Почта"
-              class="auth-email-input"/>
+              class="input"
+            />
           </div>
-          <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
+          <p v-if="errors.email" class="error-text">{{ errors.email }}</p>
         </div>
 
         <!-- Submit -->
         <button
           type="submit"
-          class="auth-button-submit">
+          class="submit-btn"
+          :class="{ 'hover-light': !isFormValid }"
+          :disabled="!isFormValid"
+        >
           Отправить код
         </button>
       </form>
 
-      <button
-        type="submit"
-        class="mt-4 text-sm text-orange-500 hover:underline rounded-xl"
-        style="width: 362px; height: 48px; margin-top: 12px; background-color: F4F4F4;
-        color: #555555; border-radius: 18px; border: none; font-size: 18px; font-weight: 600;"
-        @click="handleDecline"
-      >
+      <!-- Отмена -->
+      <button class="create-btn" @click="handleDecline">
         Отмена
       </button>
 
-      <p class="info-message">
+      <p class="contact-text">
         По всем вопросам можете обращаться:<br>
         adminexample@gmail.com
       </p>
@@ -49,43 +54,41 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { sendVerificationEmail } from "@/services/api";
+// import { sendVerificationEmail } from "@/services/api";
 
 const router = useRouter();
 const email = ref("");
-const password = ref("");
-const remember = ref(false);
-const showPassword = ref(false);
 
-const errors = ref({ email: null, password: null });
-const globalError = ref(null);
+const errors = ref({ email: null });
 
-const passwordStrength = ref(0);
+// Проверка валидности формы
+const isFormValid = computed(() => {
+  return email.value.length > 0 && email.value.includes("@");
+});
 
-async function handleSubmit() {
-  errors.value = { email: null, password: null };
-  globalError.value = null;
+const handleSubmit = async () => {
+  errors.value.email = null;
 
-  if (!email.value) errors.value.email = "Указана неправильная почта";
-  if (!password.value) errors.value.password = "Пароль";
-
-  if (email.value && !email.value.includes("@")) {
+  if (!email.value) {
+    errors.value.email = "Почта не указана";
+    return;
+  } else if (!email.value.includes("@")) {
     errors.value.email = "Неверный формат почты";
+    return;
   }
 
-  if (!errors.value.email && !errors.value.password) {
-    try {
-      // const email_response = await sendVerificationEmail(email.value);
-      // if (!email_response.ok) {
-      //   throw new Error("Не удалось отправить письмо");
-      // }
-      // localStorage.setItem("email", email.value);
-      router.push("/confirm-email");
-    } catch (error) {
-      console.log(error);
-      globalError.value = error.message;
-      return;
-    }
+  try {
+    // Пример API вызова
+    // const response = await sendVerificationEmail(email.value);
+    // if (!response.ok) {
+    //   if (response.status === 404) errors.value.email = "Аккаунт с такой почтой не существует";
+    //   else throw new Error("Не удалось отправить письмо");
+    //   return;
+    // }
+
+    router.push("/confirm-email");
+  } catch (error) {
+    errors.value.email = error.message;
   }
 };
 
@@ -96,7 +99,4 @@ const handleDecline = () => {
 
 <style scoped>
 @import './auth.css';
-.email-placeholder::placeholder {
-  transform: translateX(20px);
-}
 </style>

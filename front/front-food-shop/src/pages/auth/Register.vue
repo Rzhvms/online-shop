@@ -1,64 +1,74 @@
 <template>
-  <div class="auth-container">
-    <!-- Карточка -->
-    <div class="auth-card">
-      <!-- Заголовок -->
-      <h1 class="auth-title">Регистрация</h1>
+  <div class="page-bg">
+    <div class="login-card">
+      <h1 class="login-title">Регистрация</h1>
 
-      <!-- Форма -->
-      <form @submit.prevent="handleSubmit" class="auth-form">
+      <form @submit.prevent="handleSubmit" class="form">
 
-      <!-- Email -->
-      <div class="auth-email">
-        <div class="auth-email-div {{ errors.email ? 'error' : '' }}">
-          <input
-            v-model="email"
-            type="email"
-            placeholder="Почта"
-            class="auth-email-input"/>
+        <!-- Email -->
+        <div class="field-wrap">
+          <div :class="['field', errors.email ? 'field-error' : '']">
+            <input
+              v-model="email"
+              type="email"
+              placeholder="Почта"
+              class="input"
+            />
+          </div>
+          <p v-if="errors.email" class="error-text">{{ errors.email }}</p>
         </div>
-        <p v-if="errors.email" class="error-message">{{ errors.email }}</p>
-      </div>
 
         <!-- Password -->
-        <div class="auth-email" style="margin-bottom: 0px;">
-          <div class="auth-email-div {{ errors.password ? 'error' : '' }}">
+        <div class="field-wrap">
+          <div :class="['field', errors.password ? 'field-error' : '']">
             <input
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Пароль"
-              class="auth-email-input"
-              @input="checkPasswordStrength"/>
-
-            <!-- SHOW / HIDE внутри поля -->
-            <button
-              type="button"
-              class="auth-button"
-              @click="showPassword = !showPassword"
-            >
+              class="input"
+              maxlength="30"
+              @input="onPasswordInput"
+            />
+            <button type="button" class="show-btn" @click="showPassword = !showPassword">
               {{ showPassword ? '🙈' : '👁️' }}
             </button>
           </div>
-          <p class="info-message" style="font-size: 16px; display:flex;">Сложность пароля:</p>
-          <div v-if="password.length > 0" class="password-strength">
-            <div class="strength-bar" :class="strengthClass"></div>
-            <span class="strength-text">{{ strengthText }}</span>
-          </div>
+          <p v-if="errors.password" class="error-text">{{ errors.password }}</p>
+
+          <transition name="fade-slide">
+            <div v-if="showPasswordStrength" class="password-strength-wrapper">
+              <p class="contact-text" style="font-size: 16px; text-align: left; margin-bottom: 4px;">Сложность пароля:</p>
+              <div class="password-strength">
+                <div class="strength-bar" :style="{ width: strengthWidth, background: strengthColor }"></div>
+                <span class="strength-text">{{ strengthText }}</span>
+              </div>
+            </div>
+          </transition>
         </div>
 
-        <p class="info-message">
-        Пароль должен содержать не менее 8 символов, включая латинские буквы (a-z, A-Z), как минимум одну заглавную букву и одну цифру
+        <p class="contact-text" style="margin-top: 8px; font-size: 12px;">
+          Пароль должен содержать не менее 8 символов, включая <br>
+          латинские буквы (a-z, A-Z), как минимум одну заглавную<br>
+          букву и одну цифру
         </p>
 
-        <!-- Submit -->
         <button
           type="submit"
-          class="auth-button-submit">
+          class="submit-btn"
+          :class="{ 'inactive-btn': !isFormValid }"
+          :disabled="!isFormValid"
+        >
           Далее
         </button>
       </form>
 
-      <p class="info-message">
+      <transition name="fade-slide-btn">
+        <button v-if="showAltButton" class="create-btn" @click="handleLogin">
+          У меня уже есть аккаунт
+        </button>
+      </transition>
+
+      <p class="contact-text" style="margin-top: 16px;">
         По всем вопросам можете обращаться:<br>
         adminexample@gmail.com
       </p>
@@ -67,120 +77,117 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import { sendVerificationEmail } from "@/services/api";
 
 const router = useRouter();
 const email = ref("");
 const password = ref("");
-const remember = ref(false);
 const showPassword = ref(false);
 
 const errors = ref({ email: null, password: null });
-const globalError = ref(null);
-
 const passwordStrength = ref(0);
+const showPasswordStrength = ref(false);
 
-async function handleSubmit() {
+const isFormValid = computed(() => email.value.includes("@") && password.length >= 8);
+const showAltButton = computed(() => !email.value && !password.value);
+
+const handleSubmit = async () => {
   errors.value = { email: null, password: null };
-  globalError.value = null;
 
-  if (!email.value) errors.value.email = "Указана неправильная почта";
-  if (!password.value) errors.value.password = "Пароль";
+  if (!email.value) errors.value.email = "Почта не указана";
+  else if (!email.value.includes("@")) errors.value.email = "Неверный формат почты";
 
-  if (email.value && !email.value.includes("@")) {
-    errors.value.email = "Неверный формат почты";
-  }
+  if (!password.value) errors.value.password = "Пароль не указан";
+  else if (password.value.length < 8) errors.value.password = "Пароль слишком короткий";
 
-  if (!errors.value.email && !errors.value.password) {
-    try {
-      // const email_response = await sendVerificationEmail(email.value);
-      // if (!email_response.ok) {
-      //   throw new Error("Не удалось отправить письмо");
-      // }
-      // localStorage.setItem("email", email.value);
-      router.push("/confirm-email");
-    } catch (error) {
-      console.log(error);
-      globalError.value = error.message;
-      return;
-    }
+  if (errors.value.email || errors.value.password) return;
+
+  router.push("/confirm-email");
+};
+
+const onPasswordInput = () => {
+  checkPasswordStrength();
+  if (password.value.length > 0) {
+    setTimeout(() => showPasswordStrength.value = true, 50);
+  } else {
+    showPasswordStrength.value = false;
   }
 };
 
 const checkPasswordStrength = () => {
-  let strength = 0;
   const pass = password.value;
-
-  if (pass.length > 0) {
-    if (pass.length >= 8) {
-      strength += 1;
-    }
-    if (pass.match(/[a-z]/) && pass.match(/[A-Z]/)) {
-      strength += 1;
-    }
-    if (pass.match(/[0-9]/)) {
-      strength += 1;
-    }
-  }
-  passwordStrength.value = Math.min(strength, 3);
+  let score = 0;
+  if (pass.length >= 8) score += 1;
+  if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) score += 1;
+  if (/[0-9]/.test(pass)) score += 1;
+  passwordStrength.value = score;
 };
-
-const strengthClass = computed(() => {
-  switch (passwordStrength.value) {
-    case 1:
-      return "strength-weak";
-    case 2:
-      return "strength-medium";
-    case 3:
-      return "strength-strong";
-    default:
-      return "strength-weak";
-  }
-});
 
 const strengthText = computed(() => {
   switch (passwordStrength.value) {
-    case 1:
-      return "Слабый";
-    case 2:
-      return "Средний";
-    case 3:
-      return "Сильный";
-    default:
-      return "Слабый";
+    case 1: return "Слабый";
+    case 2: return "Средний";
+    case 3: return "Сильный";
+    default: return "Слабый";
   }
 });
+
+const strengthWidth = computed(() => {
+  if (!password.value) return "10%";
+  return `${passwordStrength.value * 30 + 10}%`;
+});
+
+const strengthColor = computed(() => {
+  switch (passwordStrength.value) {
+    case 1: return "#E63946";
+    case 2: return "#FFA84C";
+    case 3: return "#8ED76A";
+    default: return "#E63946";
+  }
+});
+
+const handleLogin = () => router.push("/login");
 </script>
 
 <style scoped>
 @import './auth.css';
-.email-placeholder::placeholder {
-  transform: translateX(20px);
+
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: all 0.3s ease;
 }
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.fade-slide-enter-to, .fade-slide-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-slide-btn-enter-active, .fade-slide-btn-leave-active {
+  transition: all 0.2s ease;
+}
+.fade-slide-btn-enter-from, .fade-slide-btn-leave-to {
+  opacity: 0;
+  transform: translateY(0);
+}
+.fade-slide-btn-enter-to, .fade-slide-btn-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .password-strength {
   margin-top: 8px;
   margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
 }
 
 .strength-bar {
-  height: 4px;
-  border-radius: 2px;
-  transition: all 0.3s ease;
-  width: 100%;
-}
-
-.strength-weak {
-  background: linear-gradient(90deg, #E63946 0%, #E63946 33.33%, #f4f4f4 33.33%, #f4f4f4 100%);
-}
-
-.strength-medium {
-  background: linear-gradient(90deg, #FFA84C 0%, #FFA84C 66.66%, #f4f4f4 66.66%, #f4f4f4 100%);
-}
-
-.strength-strong {
-  background: #8ED76A;
+  height: 8px;
+  border-radius: 4px;
+  transition: width 0.3s ease, background 0.3s ease;
 }
 
 .strength-text {
@@ -189,11 +196,14 @@ const strengthText = computed(() => {
   display: block;
 }
 
-.auth-email {
-  height:auto;
+.submit-btn.inactive-btn {
+  background-color: #FFA84C;
+  color: white;
+  cursor: not-allowed;
 }
 
-.auth-email-div {
-  height:48px;
+.submit-btn:enabled:hover {
+  background-color: #f4f4f4;
+  color: #ff7a00;
 }
 </style>

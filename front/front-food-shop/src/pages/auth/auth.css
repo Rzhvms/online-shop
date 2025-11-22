@@ -1,144 +1,196 @@
-.auth-container {
-    width: 100vw;
-    height: 100vh;
-    background-color: #F4F4F4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.page-bg {
+  width: 100vw;
+  height: 100vh;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.auth-card {
-    width: 410px;
-    height: 508px;
-    background-color: #FFFFFF;
-    border-radius: 32px;
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 32px;
+/* Card */
+.login-card {
+  width: 410px;
+  height: 508px;
+  background: white;
+  border-radius: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.auth-title {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 32px;
-    text-align: center;
-    color: #3C3C3C;
-    margin-top: 40px;
+/* Title */
+.login-title {
+  margin-top: 40px;
+  margin-bottom: 32px;
+  font-size: 36px;
+  font-weight: 600;
+  color: #3c3c3c;
+  text-align: center;
 }
 
-.auth-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-}
-
-.auth-email {
-    width: 362px;
-    height: 48px;
-    margin-bottom: 12px;
-    position: relative;
-}
-
-.auth-email-div {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    border: 1px solid #d1d5db;
-    border-radius: 18px;
-    background-color: #F4F4F4;
-    padding-inline: 16px;
-    padding-block: 8px;
-    transition: border-color 0.2s ease;
-}
-
-.auth-email-div.error {
-    border-color: #ef4444;
-}
-
-.auth-email-div:focus-within {
-    border-color: #FF7A00;
-    border-width: 1px;
-    outline: 2px solid #FF7A00;
-}
-
-.auth-email-input {
-    flex: 1;
-    background: transparent;
-    outline: none;
-    color: black;
-    border: none;
-    margin-left: 20px;
-    font-size: 16px;
-}
-
-.error-message {
-    color: #ef4444;
-    font-size: 12px;
-    margin-top: 4px;
-}
-
+/* Errors */
 .global-error {
-    color: #ef4444;
-    margin-bottom: 16px;
-    font-size: 12px;
-    text-align: center;
-    width: 100%;
+  color: red;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 16px;
 }
 
-.auth-button {
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: oklch(44.6% 0.03 256.802);
-    background: none;
-    border: none;
-    padding: 0;
-    padding-right: 15px;
+.error-text {
+  color: #ff3333;
+  font-size: 14px;
+  margin-top: 6px;
 }
 
-.auth-button:hover {
-    color: black;
+/* Form */
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.auth-button-submit {
-    background-color: oklch(70.5% 0.213 47.604);
-    color: white;
-    border-radius: 18px;
-    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-    font-size: medium;
-    width: 362px;
-    height: 48px;
-    margin-top: 32px;
-    border-width: 1px;
-    font-weight: 600;
+/* Fields */
+.field-wrap {
+  width: 362px;
+  margin: 0 auto 12px auto;
 }
 
-.auth-button-submit:hover {
-    background-color: oklch(70.5% 0.213 47.604);
+.field {
+  height: 48px;
+  background: #f4f4f4;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  border: none;
 }
 
-.info-message {
-    color: #7a7a7a;
-    font-size: 12px;
-    margin-top: 8px;
-    text-align: center;
+.field-error {
+  border: 1px solid red !important;
 }
 
-input[type="checkbox"]:checked {
-    appearance: none;
-    width: 16px;
-    height: 16px;
-    border-radius: 4px;
-    background-color: #FF7A00;
-    border-color: #FF7A00;
-    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+.input {
+  flex: 1;
+  background: transparent;
+  outline: none;
+  border: none;
+  font-size: 16px;
 }
 
+/* Show/hide button */
+.show-btn {
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Remember + forgot */
+.remember-forgot {
+  width: 362px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #3c3c3c;
+  user-select: none;
+}
+
+/* Кастомный чекбокс */
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #c0c0c0;
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  background: white;
+  display: inline-block;
+  vertical-align: middle;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox:hover {
+  border-color: #ff7a00;
+}
+
+.custom-checkbox:checked {
+  background: #ff7a00;
+  border-color: #ff7a00;
+}
+
+.custom-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  left: 2.5px;
+  bottom: 2px;
+}
+
+/* Buttons */
+.forgot-btn {
+  background: none;
+  border: none;
+  color: #ff7a00;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.submit-btn {
+  width: 362px;
+  height: 48px;
+  background: #ff7a00;
+  color: white;
+  border-radius: 18px;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 32px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover {
+  background: #FFA84C;
+}
+
+.submit-btn.hover-light {
+  background: #ffa84c;
+  color: white;
+}
+
+.create-btn {
+  width: 362px;
+  height: 48px;
+  margin-top: 12px;
+  background: #f4f4f4;
+  color: #555555;
+  border-radius: 18px;
+  border: none;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contact-text {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #7a7a7a;
+  text-align: center;
+}
